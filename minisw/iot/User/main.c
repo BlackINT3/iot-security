@@ -131,18 +131,22 @@ uint16_t fac_ms;
 uint8_t fac_us;
 void Delay_Ms(uint16_t nms)
 {
-   	SysTick->LOAD = (uint32_t)fac_ms*nms-1;
-	  SysTick->VAL = 1;
-	  SysTick->CTRL |= BIT(0);
-	  while(!(SysTick->CTRL&(1<<16)));
-	  SysTick->CTRL &=~BIT(0);
+	int32_t temp;		   
+	SysTick->LOAD=(int32_t)nms*fac_ms;
+	SysTick->VAL =0x00;
+	SysTick->CTRL|=SysTick_CTRL_ENABLE_Msk ;
+	do {
+		temp=SysTick->CTRL;
+	}
+	while(temp&0x01&&!(temp&(1<<16)));
+	SysTick->CTRL&=~SysTick_CTRL_ENABLE_Msk;
+	SysTick->VAL =0X00;
 }
-void Delay_Init(uint8_t SYSCLK)
+void Delay_Init()
 {
-   SysTick->CTRL &=~BIT(2);
-	 SysTick->CTRL &=~BIT(1);
-	 fac_us = SYSCLK/8;
-	 fac_ms = (uint16_t)fac_us*1000;	 
+	SysTick_CLKSourceConfig(SysTick_CLKSource_HCLK_Div8);
+	fac_us=SystemCoreClock/8000000;
+	fac_ms=(int16_t)fac_us*1000; 
 }
 
 void USART1_Init(unsigned int baud)
@@ -405,7 +409,7 @@ void TIM14_IRQHandler(void)
 int main(void)
 {
 	//延时初始化
-	Delay_Init(48);
+	Delay_Init();
 	
 	//WiFi初始化
 	WiFi_Init();
@@ -469,9 +473,13 @@ int main(void)
 												Delay_Ms(1000);
 												RELEASE_BUTTON();
 											} else {
-												//闭合5s，实现强制关机
+												//闭合5s，实现强制关机(重复5次，这样写是防止用5000导致溢出结果不准确)
 												PRESS_BUTTON();
-												Delay_Ms(5000);
+												Delay_Ms(1000);
+												Delay_Ms(1000);
+												Delay_Ms(1000);
+												Delay_Ms(1000);
+												Delay_Ms(1000);
 												RELEASE_BUTTON();
 											}
 										}									
