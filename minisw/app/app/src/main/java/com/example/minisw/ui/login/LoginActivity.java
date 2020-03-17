@@ -158,6 +158,9 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
+        if (!user.isEmpty() && !passwd.isEmpty())
+            loginButton.performClick();
+
     }
 
     private void updateUiWithUser(LoggedInUserView model) {
