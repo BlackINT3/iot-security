@@ -338,7 +338,7 @@ void WiFi_MiniSW_Status()
 	sprintf(TXbuff,"GET /minisw/ HTTP/1.1\r\n");
 	sprintf(temp,"Authorization:%s\r\n",ACCESS_KEY);
 	strcat(TXbuff,temp);
-	strcat(TXbuff,"Host:33322.zicp.vip:30000\r\n\r\n");
+	strcat(TXbuff,"Host:www.aaabbbccc.com:30000\r\n\r\n");
 }
 
 char WiFi_Start()
