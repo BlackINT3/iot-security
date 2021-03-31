@@ -1,6 +1,3 @@
-# BLOG
-存放作者的一些研究和思考...
-
 # IoT安全
 [《IoT实践--电脑远程开关的制作》](iot/minisw/README.md)
 
